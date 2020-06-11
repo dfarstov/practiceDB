@@ -14,7 +14,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("БД");
-            stage.setResizable(false);
+            //stage.setResizable(false);
 
             stage.show();
     }
