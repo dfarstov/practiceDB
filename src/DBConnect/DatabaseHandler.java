@@ -1,6 +1,7 @@
 package DBConnect;
 
 import Model.*;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,11 +24,12 @@ public class DatabaseHandler extends Config{
         return dbConnection;
     }
 
-    public Vector<ProductsStatistic> getTableData() throws SQLException, ClassNotFoundException {
-        Vector<ProductsStatistic> productsStatistics = new Vector<ProductsStatistic>();
+    public Vector<ProductStatisticInfo> getTableData() throws SQLException, ClassNotFoundException {
+        Vector<ProductStatisticInfo> productStatisticInfos = new Vector<ProductStatisticInfo>();
         ResultSet resSet = null;
         String select =
                 "SELECT \n" +
+                        "    p.id_statistic,\n" +
                         "    r.name,\n" +
                         "    c.name,\n" +
                         "    p.oil,\n" +
@@ -41,14 +43,15 @@ public class DatabaseHandler extends Config{
         PreparedStatement prSt = getDbConnection().prepareStatement(select);
             resSet = prSt.executeQuery();
         while(resSet.next()) {
-            ProductsStatistic temp = new ProductsStatistic();
-                              temp.setRegion(resSet.getString(1));
-                              temp.setCountry(resSet.getString(2));
-                              temp.setOil(resSet.getInt(3));
-                              temp.setCheese(resSet.getInt(4));
-            productsStatistics.add(temp);
+            ProductStatisticInfo temp = new ProductStatisticInfo();
+                              temp.setId(resSet.getInt(1));
+                              temp.setRegion(resSet.getString(2));
+                              temp.setCountry(resSet.getString(3));
+                              temp.setOil(resSet.getInt(4));
+                              temp.setCheese(resSet.getInt(5));
+            productStatisticInfos.add(temp);
         }
-        return productsStatistics;
+        return productStatisticInfos;
     }
 
     public Vector<Region> getRegions() throws SQLException, ClassNotFoundException {
@@ -68,16 +71,72 @@ public class DatabaseHandler extends Config{
 
     public boolean containsCountry(String country) throws SQLException, ClassNotFoundException {
         ResultSet resSet = null;
-        String select = "SELECT * FROM countries WHERE name = " + country;
+        String select = String.format("SELECT * FROM countries WHERE name = \'%s\'", country);
         PreparedStatement prSt = getDbConnection().prepareStatement(select);
             resSet = prSt.executeQuery();
-        if (resSet == null) {
-            return false;
+        if (resSet.next()) {
+            return true;
         }
-        return true;
+        return false;
     }
 
-    public void addCountry(String country, int id) {
+    public void addCountry(String country, int idRegion) throws SQLException, ClassNotFoundException {
+        //add country
+        String insert = "INSERT countries(name, id_region) VALUES(?,?);";
+        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+            prSt.setString(1, country);
+            prSt.setString(2, String.valueOf(idRegion));
 
+            prSt.executeUpdate();
+    }
+
+    public String getCountryID(String country) throws SQLException, ClassNotFoundException {
+        String countryID = null;
+
+        //get country id
+        String select = String.format("SELECT id_country FROM countries WHERE name = \'%s\'", country);
+        PreparedStatement prSt = getDbConnection().prepareStatement(select);
+        ResultSet resSet = prSt.executeQuery();
+
+        if(resSet.next()) {
+            countryID = resSet.getString(1);
+        }
+
+        return countryID;
+    }
+
+    public void addProductsStatistic(String newCountryID, String oil, String cheese) throws SQLException, ClassNotFoundException {
+        //add stats
+        String insert = "INSERT products_statistics(id_country, oil, cheese) VALUES(?,?,?);";
+        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+            prSt.setString(1, newCountryID);
+            prSt.setString(2, String.valueOf(oil));
+            prSt.setString(3, String.valueOf(cheese));
+
+            prSt.executeUpdate();
+    }
+
+    public void removeProductStatistic(ObservableList<ProductStatisticInfo> selectedItems) throws SQLException, ClassNotFoundException {
+        for (ProductStatisticInfo statisticInfo: selectedItems) {
+            ResultSet resSet = null;
+
+            String sql = String.format("SELECT id_country FROM products_statistics WHERE id_statistic = %s", statisticInfo.getId());
+            PreparedStatement prSt = getDbConnection().prepareStatement(sql);
+                resSet = prSt.executeQuery();
+
+            if(resSet.next()) {
+                int countryID = resSet.getInt(1);
+                executeSql(statisticInfo.getId(), "DELETE FROM products_statistics WHERE id_statistic = %s; ");
+                executeSql(countryID, "DELETE FROM countries WHERE id_country = %s;");
+            }
+        }
+    }
+
+    private void executeSql(int countryID, String s) throws SQLException, ClassNotFoundException {
+        String sql;
+        PreparedStatement prSt;
+        sql = String.format(s, countryID);
+        prSt = getDbConnection().prepareStatement(sql);
+        prSt.executeUpdate();
     }
 }

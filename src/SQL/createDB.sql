@@ -7,7 +7,7 @@ CREATE TABLE regions
 );
 
 INSERT INTO regions(name) VALUES("Сев. Америка");
-INSERT INTO regions(name) VALUES("Европа"); 
+INSERT INTO regions(name) VALUES("Европа");
 INSERT INTO regions(name) VALUES("Азия");
 
 CREATE TABLE countries

@@ -25,16 +25,14 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="462.0" prefWidth="755.0" VBox.vgrow="ALWAYS">
          <children>
             <TableView fx:id="dataTable" layoutX="14.0" layoutY="14.0" prefHeight="451.0" prefWidth="513.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="14.0" />
-            <Button fx:id="addButton" layoutX="537.0" layoutY="14.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Добавить запись" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0" />
-            <Button fx:id="updateButton" layoutX="537.0" layoutY="63.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Обновить запись" AnchorPane.rightAnchor="13.0" />
-            <Button fx:id="graphBurron" layoutX="537.0" layoutY="421.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Построить график" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="13.0" />
-            <CheckBox fx:id="sumCheckBox" layoutX="537.0" layoutY="391.0" mnemonicParsing="false" text="Минимум сум. изгот." AnchorPane.rightAnchor="82.0" />
-            <TextField fx:id="sumTextField" layoutX="692.0" layoutY="387.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" />
-            <CheckBox fx:id="cheeseCheckBox" layoutX="537.0" layoutY="323.0" mnemonicParsing="false" text="Минимум изгот. масла" AnchorPane.rightAnchor="72.0" />
-            <TextField fx:id="cheeseTextField" layoutX="692.0" layoutY="319.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" />
-            <CheckBox fx:id="oilCheckBox" layoutX="537.0" layoutY="356.0" mnemonicParsing="false" text="Минимум изгот. масла" AnchorPane.rightAnchor="72.0" />
-            <TextField fx:id="oilTextField" layoutX="692.0" layoutY="352.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" />
-            <Button fx:id="removeButton" layoutX="537.0" layoutY="111.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Удалить запись/записи" AnchorPane.rightAnchor="13.0" />
+            <Button fx:id="graphButton" layoutX="537.0" layoutY="421.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Построить график" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="13.0" />
+            <CheckBox fx:id="sumCheckBox" layoutX="537.0" layoutY="86.0" mnemonicParsing="false" text="Минимум сум. изгот." AnchorPane.rightAnchor="82.0" />
+            <TextField fx:id="sumTextField" layoutX="692.0" layoutY="82.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" />
+            <CheckBox fx:id="cheeseCheckBox" layoutX="535.0" layoutY="18.0" mnemonicParsing="false" text="Минимум изгот. сыра" AnchorPane.rightAnchor="79.0" AnchorPane.topAnchor="18.0" />
+            <TextField fx:id="cheeseTextField" layoutX="692.0" layoutY="14.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0" />
+            <CheckBox fx:id="oilCheckBox" layoutX="537.0" layoutY="51.0" mnemonicParsing="false" text="Минимум изгот. масла" AnchorPane.rightAnchor="72.0" />
+            <TextField fx:id="oilTextField" layoutX="692.0" layoutY="47.0" prefHeight="25.0" prefWidth="50.0" AnchorPane.rightAnchor="13.0" />
+            <Button fx:id="filterButton" layoutX="537.0" layoutY="117.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="205.0" text="Применить фильтр" AnchorPane.rightAnchor="13.0" />
          </children>
     </AnchorPane>
   </children>

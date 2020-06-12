@@ -1,20 +1,30 @@
 package Model;
 
-public class ProductsStatistic {
+public class ProductStatisticInfo {
+    private int id;
     private String region;
     private String country;
     private int oil;
     private int cheese;
 
-    public ProductsStatistic() {
+    public ProductStatisticInfo() {
 
     }
 
-    public ProductsStatistic(String region, String country, int oil, int cheese) {
+    public ProductStatisticInfo(int id, String region, String country, int oil, int cheese) {
+        this.id = id;
         this.region = region;
         this.country = country;
         this.oil = oil;
         this.cheese = cheese;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getRegion() {
