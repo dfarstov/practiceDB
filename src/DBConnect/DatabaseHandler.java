@@ -1,5 +1,6 @@
 package DBConnect;
 
+import JavaFXMods.SendData;
 import Model.*;
 import javafx.collections.ObservableList;
 
@@ -90,14 +91,12 @@ public class DatabaseHandler extends Config{
             prSt.executeUpdate();
     }
 
-    public String getCountryID(String country) throws SQLException, ClassNotFoundException {
+    public String getCountryID(String id) throws SQLException, ClassNotFoundException {
         String countryID = null;
 
-        //get country id
-        String select = String.format("SELECT id_country FROM countries WHERE name = \'%s\'", country);
+        String select = String.format("SELECT id_country FROM products_statistics WHERE id_statistic = \'%s\'", id);
         PreparedStatement prSt = getDbConnection().prepareStatement(select);
         ResultSet resSet = prSt.executeQuery();
-
         if(resSet.next()) {
             countryID = resSet.getString(1);
         }
@@ -133,10 +132,24 @@ public class DatabaseHandler extends Config{
     }
 
     private void executeSql(int countryID, String s) throws SQLException, ClassNotFoundException {
-        String sql;
-        PreparedStatement prSt;
-        sql = String.format(s, countryID);
-        prSt = getDbConnection().prepareStatement(sql);
-        prSt.executeUpdate();
+        PreparedStatement prSt = getDbConnection().prepareStatement(String.format(s, countryID));
+                          prSt.executeUpdate();
+    }
+
+    public void updateCountry(String country, int idRegion) throws SQLException, ClassNotFoundException {
+        String insert = String.format("UPDATE countries SET name = \'%s\', id_region = %d WHERE id_country = %s;", country, idRegion, getCountryID(SendData.getSendData()));
+        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+                          prSt.executeUpdate();
+    }
+
+    public void updateProductsStatistic(String id, String oil, String cheese) throws SQLException, ClassNotFoundException {
+        String insert = "UPDATE products_statistics SET id_statistic = ?, oil = ?, cheese = ? WHERE id_statistic = ?;";
+        PreparedStatement prSt = getDbConnection().prepareStatement(insert);
+            prSt.setString(1, id);
+            prSt.setString(2, oil);
+            prSt.setString(3, cheese);
+            prSt.setString(4, id);
+
+            prSt.executeUpdate();
     }
 }

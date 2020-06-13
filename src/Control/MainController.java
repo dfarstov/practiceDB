@@ -1,10 +1,13 @@
 package Control;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 //javafx
+import JavaFXMods.SendData;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,9 +20,16 @@ import Model.*;
 import DBConnect.DatabaseHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MainController extends Controller{
+
+    @FXML
+    private MenuItem saveTextButton;
+
+    @FXML
+    private MenuItem saveExcelButton;
 
     @FXML
     private ResourceBundle resources;
@@ -60,10 +70,11 @@ public class MainController extends Controller{
 
     @FXML
     void initialize() {
+        disableFilters();
         createTable();
-        setButtonAction();
+        setElementsActions();
     }
-
+    
     private void createTable(){
         dataTable.getColumns().clear();
         dataTable.getItems().clear();
@@ -90,12 +101,57 @@ public class MainController extends Controller{
         tableContextMenuCreate();
     }
 
-    private void setButtonAction() {
+    private void setElementsActions() {
+        setButtonsAction();
+        setCheckBoxAction(oilCheckBox, oilTextField);
+        setCheckBoxAction(cheeseCheckBox, cheeseTextField);
+        setCheckBoxAction(sumCheckBox, sumTextField);
+    }
+
+    private void setButtonsAction() {
         filterButton.setOnAction(actionEvent -> {
             useFilter();
         });
         graphButton.setOnAction(actionEvent -> {
 
+        });
+        saveTextButton.setOnAction(actionEvent -> {
+            saveTextFile();
+        });
+        saveExcelButton.setOnAction(actionEvent -> {
+
+        });
+    }
+
+    private void saveTextFile() {
+        FileChooser fileChooser = new FileChooser();
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        Stage stage = new Stage();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                PrintWriter writer;
+                writer = new PrintWriter(file);
+                String content = getTableText();
+                writer.println(content);
+                writer.close();
+            } catch (IOException ex) {
+                showError("Ошибка сохранения", ex.getMessage());
+            }
+        }
+    }
+
+    private void setCheckBoxAction(CheckBox oilCheckBox, TextField oilTextField) {
+        oilCheckBox.setOnAction(actionEvent -> {
+            if (oilCheckBox.isSelected()) {
+                oilTextField.setDisable(false);
+            } else {
+                oilTextField.setDisable(true);
+            }
         });
     }
 
@@ -168,23 +224,30 @@ public class MainController extends Controller{
     }
 
     private void applyFilters() {
+        Vector<ProductStatisticInfo> removeVector = new Vector<ProductStatisticInfo>();
         if (cheeseCheckBox.isSelected()) {
+            removeVector.clear();
             for(ProductStatisticInfo productStatisticInfo: dataTable.getItems()){
                 if (productStatisticInfo.getCheese() < Integer.parseInt(cheeseTextField.getText()))
-                    dataTable.getItems().remove(productStatisticInfo);
+                    removeVector.add(productStatisticInfo);
             }
+            dataTable.getItems().removeAll(removeVector);
         }
         if (oilCheckBox.isSelected()) {
+            removeVector.clear();
             for(ProductStatisticInfo productStatisticInfo: dataTable.getItems()){
                 if (productStatisticInfo.getOil() < Integer.parseInt(oilTextField.getText()))
-                    dataTable.getItems().remove(productStatisticInfo);
+                    removeVector.add(productStatisticInfo);
             }
+            dataTable.getItems().removeAll(removeVector);
         }
         if (sumCheckBox.isSelected()) {
+            removeVector.clear();
             for(ProductStatisticInfo productStatisticInfo: dataTable.getItems()){
                 if ((productStatisticInfo.getCheese() + productStatisticInfo.getOil()) < Integer.parseInt(sumTextField.getText()))
-                    dataTable.getItems().remove(productStatisticInfo);
+                    removeVector.add(productStatisticInfo);
             }
+            dataTable.getItems().removeAll(removeVector);
         }
     }
 
@@ -198,17 +261,8 @@ public class MainController extends Controller{
     }
 
     private void addProductStatistic() {
-        Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("../View/add.fxml"));
-            Scene scene = new Scene(root);
-            Stage addWindow = new Stage();
-                  addWindow.setTitle("Добавить запись");
-                  addWindow.setScene(scene);
-                  addWindow.setResizable(false);
-                  addWindow.setOnHiding(event -> {loadTableData();} );
-
-                  addWindow.show();
+            showSecondaryWindow("../View/add.fxml", "Добавить запись");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -216,10 +270,25 @@ public class MainController extends Controller{
 
     private void updateProductStatistic() {
         try {
-
+            SendData.setSendData(String.valueOf(dataTable.getSelectionModel().getSelectedItem().getId()));
+            showSecondaryWindow("../View/update.fxml", "Обновить запись");
         } catch (Exception e) {
             showError("Ошибка!", e.getMessage());
         }
+    }
+
+    private void showSecondaryWindow(String fxmlPath, String title) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+        Scene scene = new Scene(root);
+        Stage secondaryWindow = new Stage();
+              secondaryWindow.setTitle(title);
+              secondaryWindow.setScene(scene);
+              secondaryWindow.setResizable(false);
+              secondaryWindow.setOnHiding(event -> {
+                  loadTableData();
+              });
+
+              secondaryWindow.show();
     }
 
     private void removeProductStatistic() {
@@ -234,6 +303,26 @@ public class MainController extends Controller{
         dataTable.refresh();
     }
 
-    private void refreshFilters() {
+    private void disableFilters() {
+        oilTextField.setDisable(true);
+        cheeseTextField.setDisable(true);
+        sumTextField.setDisable(true);
+    }
+
+    private String getTableText() {
+        String separator = "+";
+        for (int i = 0; i < 63; ++i)
+            separator += "-";
+        separator += "+\n";
+        StringBuilder tableDataBuilder = new StringBuilder();
+        tableDataBuilder.append(separator);
+        tableDataBuilder.append(String.format("|%15s|%15s|%15s|%15s|\n", "Регион", "Страна", "Масло", "Сыр"));
+        for (ProductStatisticInfo productStatisticInfo: dataTable.getItems()){
+            tableDataBuilder.append(String.format(separator));
+            tableDataBuilder.append(String.format("|%15s|%15s|%15d|%15d|\n", productStatisticInfo.getRegion(), productStatisticInfo.getCountry(), productStatisticInfo.getOil(), productStatisticInfo.getCheese()));
+        }
+        tableDataBuilder.append(separator);
+
+        return tableDataBuilder.toString();
     }
 }

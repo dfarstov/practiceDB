@@ -16,8 +16,8 @@
       <menus>
         <Menu mnemonicParsing="false" text="Сохранить данные как...">
           <items>
-            <MenuItem mnemonicParsing="false" text="Текстовый файл" />
-            <MenuItem mnemonicParsing="false" text="Файл excel" />
+            <MenuItem fx:id="saveTextButton" mnemonicParsing="false" text="Текстовый файл" />
+            <MenuItem fx:id="saveExcelButton" mnemonicParsing="false" text="Файл excel" />
           </items>
         </Menu>
       </menus>
