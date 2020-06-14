@@ -2,6 +2,7 @@ package Control;
 
 import DBConnect.DatabaseHandler;
 import JavaFXMods.SendData;
+import Model.ProductStatisticInfo;
 import Model.Region;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -42,7 +43,22 @@ public class UpdateController extends Controller{
     @FXML
     void initialize() {
         loadRegions();
+        loadChangeData();
         setUpdateButtonAction();
+    }
+
+    private void loadChangeData() {
+        try {
+            ProductStatisticInfo productStatisticInfo = databaseHandler.getProductStatistic(SendData.getSendData());
+            regionChoiceBox.getSelectionModel().select(productStatisticInfo.getRegion());
+            countryTextField.setText(productStatisticInfo.getCountry());
+            cheeseTextField.setText(String.valueOf(productStatisticInfo.getCheese()));
+            oilTextField.setText(String.valueOf(productStatisticInfo.getOil()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setUpdateButtonAction() {

@@ -1,27 +1,38 @@
 package Control;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 //javafx
-import JavaFXMods.SendData;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.print.PrinterJob;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-//
-import Model.*;
-import DBConnect.DatabaseHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+//apache
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+//
+import Model.*;
+import DBConnect.DatabaseHandler;
+import JavaFXMods.SendData;
+
 
 public class MainController extends Controller{
 
@@ -45,6 +56,9 @@ public class MainController extends Controller{
 
     @FXML
     private Button filterButton;
+
+    @FXML
+    private Button printButton;
 
     @FXML
     private CheckBox sumCheckBox;
@@ -113,14 +127,38 @@ public class MainController extends Controller{
             useFilter();
         });
         graphButton.setOnAction(actionEvent -> {
-
+            showGraph();
         });
         saveTextButton.setOnAction(actionEvent -> {
             saveTextFile();
         });
         saveExcelButton.setOnAction(actionEvent -> {
-
+            saveExcelFile();
         });
+        printButton.setOnAction(actionEvent -> {
+            printTable();
+        });
+    }
+
+    private void showGraph() {
+        try {
+            SendData.setSendVector(dataTable.getItems());
+            showSecondaryWindow("../View/chart.fxml", "Граф. представление");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void printTable() {
+        Node node = new Label(getTableText());
+        PrinterJob job = PrinterJob.createPrinterJob();
+
+        if (job != null) {
+            boolean success = job.printPage(node);
+            if (success) {
+                job.endJob();
+            }
+        }
     }
 
     private void saveTextFile() {
@@ -145,12 +183,71 @@ public class MainController extends Controller{
         }
     }
 
-    private void setCheckBoxAction(CheckBox oilCheckBox, TextField oilTextField) {
-        oilCheckBox.setOnAction(actionEvent -> {
-            if (oilCheckBox.isSelected()) {
-                oilTextField.setDisable(false);
+    private void saveExcelFile() {
+        FileChooser fileChooser = new FileChooser();
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Книга excel(*.xls)", "*.xls");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        Stage stage = new Stage();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                HSSFWorkbook workbook = new HSSFWorkbook();
+                HSSFSheet sheet = workbook.createSheet("Статистика");
+
+                int rownum = 0;
+                Cell cell;
+                Row row = sheet.createRow(rownum);
+
+                // Reg
+                cell = row.createCell(0, CellType.STRING);
+                cell.setCellValue("Регион");
+                // Country
+                cell = row.createCell(1, CellType.STRING);
+                cell.setCellValue("Страна");
+                // Oil
+                cell = row.createCell(2, CellType.STRING);
+                cell.setCellValue("Масло");
+                // Cheese
+                cell = row.createCell(3, CellType.STRING);
+                cell.setCellValue("Сыр");
+
+                // Data
+                for (ProductStatisticInfo data : dataTable.getItems()) {
+                    rownum++;
+                    row = sheet.createRow(rownum);
+
+                    // Reg
+                    cell = row.createCell(0, CellType.STRING);
+                    cell.setCellValue(data.getRegion());
+                    // Country
+                    cell = row.createCell(1, CellType.STRING);
+                    cell.setCellValue(data.getCountry());
+                    // Oil
+                    cell = row.createCell(2, CellType.NUMERIC);
+                    cell.setCellValue(data.getOil());
+                    // Cheese
+                    cell = row.createCell(3, CellType.NUMERIC);
+                    cell.setCellValue(data.getCheese());
+                }
+
+                workbook.write(new FileOutputStream(file));
+                workbook.close();
+            } catch (IOException ex) {
+                showError("Ошибка сохранения", ex.getMessage());
+            }
+        }
+    }
+
+    private void setCheckBoxAction(CheckBox checkBox, TextField textField) {
+        checkBox.setOnAction(actionEvent -> {
+            if (checkBox.isSelected()) {
+                textField.setDisable(false);
             } else {
-                oilTextField.setDisable(true);
+                textField.setDisable(true);
+                useFilter();
             }
         });
     }
@@ -253,6 +350,7 @@ public class MainController extends Controller{
 
     private void useFilter() {
         try {
+            loadTableData();
             checkData();
             applyFilters();
         } catch (Exception e) {

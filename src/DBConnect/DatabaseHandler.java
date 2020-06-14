@@ -152,4 +152,32 @@ public class DatabaseHandler extends Config{
 
             prSt.executeUpdate();
     }
+
+    public ProductStatisticInfo getProductStatistic(String id) throws SQLException, ClassNotFoundException {
+        ProductStatisticInfo productStatisticInfo = new ProductStatisticInfo();
+        String select = String.format(
+                "SELECT \n" +
+                        "    p.id_statistic,\n" +
+                        "    r.name,\n" +
+                        "    c.name,\n" +
+                        "    p.oil,\n" +
+                        "    p.cheese\n" +
+                        "FROM\n" +
+                        "    practice.products_statistics p\n" +
+                        "        JOIN\n" +
+                        "    countries c on c.id_country = p.id_country\n" +
+                        "        JOIN\n" +
+                        "    regions r on r.id_region = c.id_region " +
+                        "WHERE id_statistic = %s", id);
+        PreparedStatement prSt = getDbConnection().prepareStatement(select);
+        ResultSet resSet = prSt.executeQuery();
+        if (resSet.next()) {
+            productStatisticInfo.setId(resSet.getInt(1));
+            productStatisticInfo.setRegion(resSet.getString(2));
+            productStatisticInfo.setCountry(resSet.getString(3));
+            productStatisticInfo.setOil(resSet.getInt(4));
+            productStatisticInfo.setCheese(resSet.getInt(5));
+        }
+        return productStatisticInfo;
+    }
 }

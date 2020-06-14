@@ -11,33 +11,33 @@
 <VBox prefHeight="236.0" prefWidth="275.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Control.UpdateController">
   <children>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="255.0" prefWidth="275.0" VBox.vgrow="ALWAYS">
-         <children>
-            <TextField fx:id="countryTextField" layoutX="101.0" layoutY="55.0" />
-            <TextField fx:id="oilTextField" layoutX="101.0" layoutY="96.0" prefHeight="25.0" prefWidth="149.0" />
-            <TextField fx:id="cheeseTextField" layoutX="101.0" layoutY="140.0" AnchorPane.rightAnchor="25.0" />
-            <Button fx:id="updateButton" layoutX="13.0" layoutY="181.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="249.0" text="Обновить" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" />
-            <Label layoutX="14.0" layoutY="142.0" text="Сыр">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="98.0" text="Масло">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="57.0" text="Страна">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="16.0" text="Регион">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <ChoiceBox fx:id="regionChoiceBox" layoutX="101.0" layoutY="14.0" prefHeight="25.0" prefWidth="149.0" />
-         </children>
+      <children>
+        <TextField fx:id="countryTextField" layoutX="101.0" layoutY="55.0" />
+        <TextField fx:id="oilTextField" layoutX="101.0" layoutY="96.0" prefHeight="25.0" prefWidth="149.0" />
+        <TextField fx:id="cheeseTextField" layoutX="101.0" layoutY="140.0" AnchorPane.rightAnchor="25.0" />
+        <Button fx:id="updateButton" layoutX="13.0" layoutY="181.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="249.0" text="Обновить" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" />
+        <Label layoutX="14.0" layoutY="142.0" text="Сыр">
+          <font>
+            <Font size="15.0" />
+          </font>
+        </Label>
+        <Label layoutX="14.0" layoutY="98.0" text="Масло">
+          <font>
+            <Font size="15.0" />
+          </font>
+        </Label>
+        <Label layoutX="14.0" layoutY="57.0" text="Страна">
+          <font>
+            <Font size="15.0" />
+          </font>
+        </Label>
+        <Label layoutX="14.0" layoutY="16.0" text="Регион">
+          <font>
+            <Font size="15.0" />
+          </font>
+        </Label>
+        <ChoiceBox fx:id="regionChoiceBox" layoutX="101.0" layoutY="14.0" prefHeight="25.0" prefWidth="149.0" />
+      </children>
     </AnchorPane>
   </children>
 </VBox>
