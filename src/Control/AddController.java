@@ -61,7 +61,7 @@ public class AddController extends Controller{
             int regionId = getRegionId();
 
             databaseHandler.addCountry(country, regionId);
-            String newCountryID = databaseHandler.getCountryID(country);
+            String newCountryID = databaseHandler.getCountryIdByName(country);
             databaseHandler.addProductsStatistic(newCountryID, oil, cheese);
         }  catch (Exception e) {
             showError("Ошибка заполнения!", e.getMessage());

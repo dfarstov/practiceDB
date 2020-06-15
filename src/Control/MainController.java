@@ -22,7 +22,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 //apache
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,13 +51,10 @@ public class MainController extends Controller{
     private TableView<ProductStatisticInfo> dataTable;
 
     @FXML
-    private Button graphButton;
+    private Button resultButton;
 
     @FXML
     private Button filterButton;
-
-    @FXML
-    private Button printButton;
 
     @FXML
     private CheckBox sumCheckBox;
@@ -126,8 +122,8 @@ public class MainController extends Controller{
         filterButton.setOnAction(actionEvent -> {
             useFilter();
         });
-        graphButton.setOnAction(actionEvent -> {
-            showGraph();
+        resultButton.setOnAction(actionEvent -> {
+            showResult();
         });
         saveTextButton.setOnAction(actionEvent -> {
             saveTextFile();
@@ -135,29 +131,14 @@ public class MainController extends Controller{
         saveExcelButton.setOnAction(actionEvent -> {
             saveExcelFile();
         });
-        printButton.setOnAction(actionEvent -> {
-            printTable();
-        });
     }
 
-    private void showGraph() {
+    private void showResult() {
         try {
             SendData.setSendVector(dataTable.getItems());
-            showSecondaryWindow("../View/chart.fxml", "Граф. представление");
+            showSecondaryWindow("../View/result.fxml", "Результат", true);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void printTable() {
-        Node node = new Label(getTableText());
-        PrinterJob job = PrinterJob.createPrinterJob();
-
-        if (job != null) {
-            boolean success = job.printPage(node);
-            if (success) {
-                job.endJob();
-            }
         }
     }
 
@@ -360,7 +341,7 @@ public class MainController extends Controller{
 
     private void addProductStatistic() {
         try {
-            showSecondaryWindow("../View/add.fxml", "Добавить запись");
+            showSecondaryWindow("../View/add.fxml", "Добавить запись", false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -369,19 +350,19 @@ public class MainController extends Controller{
     private void updateProductStatistic() {
         try {
             SendData.setSendData(String.valueOf(dataTable.getSelectionModel().getSelectedItem().getId()));
-            showSecondaryWindow("../View/update.fxml", "Обновить запись");
+            showSecondaryWindow("../View/update.fxml", "Обновить запись", false);
         } catch (Exception e) {
             showError("Ошибка!", e.getMessage());
         }
     }
 
-    private void showSecondaryWindow(String fxmlPath, String title) throws IOException {
+    private void showSecondaryWindow(String fxmlPath, String title, boolean isResizable) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
         Scene scene = new Scene(root);
         Stage secondaryWindow = new Stage();
               secondaryWindow.setTitle(title);
               secondaryWindow.setScene(scene);
-              secondaryWindow.setResizable(false);
+              secondaryWindow.setResizable(isResizable);
               secondaryWindow.setOnHiding(event -> {
                   loadTableData();
               });

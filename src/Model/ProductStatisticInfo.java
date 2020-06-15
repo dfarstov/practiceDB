@@ -8,7 +8,11 @@ public class ProductStatisticInfo {
     private int cheese;
 
     public ProductStatisticInfo() {
-
+        this.id = -1;
+        this.region = "";
+        this.country = "";
+        this.oil = -1;
+        this.cheese = -1;
     }
 
     public ProductStatisticInfo(int id, String region, String country, int oil, int cheese) {
@@ -58,4 +62,6 @@ public class ProductStatisticInfo {
     public void setCheese(int cheese) {
         this.cheese = cheese;
     }
+
+    public int getSum() { return cheese + oil; }
 }

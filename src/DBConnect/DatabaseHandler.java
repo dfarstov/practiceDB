@@ -104,6 +104,19 @@ public class DatabaseHandler extends Config{
         return countryID;
     }
 
+    public String getCountryIdByName(String name) throws SQLException, ClassNotFoundException {
+        String countryID = null;
+
+        String select = String.format("SELECT id_country FROM countries WHERE name = \'%s\'", name);
+        PreparedStatement prSt = getDbConnection().prepareStatement(select);
+        ResultSet resSet = prSt.executeQuery();
+        if(resSet.next()) {
+            countryID = resSet.getString(1);
+        }
+
+        return countryID;
+    }
+
     public void addProductsStatistic(String newCountryID, String oil, String cheese) throws SQLException, ClassNotFoundException {
         //add stats
         String insert = "INSERT products_statistics(id_country, oil, cheese) VALUES(?,?,?);";
